@@ -6,7 +6,7 @@
         "Create new Angular app and push into your new repository.",
         "Follow below commands.",
         "npm install -g angular-cli-ghpages",
-        "ng build --base-href \"https://choudharymahipal.github.io/MahiMaterialBlocks/\"",
-        "ngh --dir dist/client"
+        "ng build --base-href \"https://choudharymahipal.github.io/Mahi-Pointing-Poker/\"",
+        "ngh --dir dist/mahi-pointing-poker"
     ]
 }
