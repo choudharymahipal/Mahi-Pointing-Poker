@@ -8,3 +8,4 @@ out-tsc/
 # Ignore IDE files
 .idea/
 .vscode/
+.angular/
