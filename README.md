@@ -1,5 +1,7 @@
 # Mahi-Pointing-Poker
 
+Live Demo: [Mahi Pointing Poker](https://choudharymahipal.github.io/Mahi-Pointing-Poker/)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.2.0.
 
 ## Development server
