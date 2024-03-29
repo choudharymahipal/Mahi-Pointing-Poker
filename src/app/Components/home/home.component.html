@@ -6,11 +6,11 @@
     <div class="col-sm-6">
         <div class="mt-4 p-5 bg-primary text-white rounded shadow-lg">
             <h1>Create Room</h1> 
-            <p>You can create your new room just enter your name.</p> 
+            <p>You can create your own new room and start estimation.</p> 
             <form class="bottomPadding">
                 <div class="row">
                   <div class="col">
-                    <button type="submit" class="btn btn-warning">Start a session</button>
+                    <button type="button" (click)="createRoom()" class="btn btn-warning">Start a session</button>
                   </div>
                 </div>
               </form>
@@ -21,14 +21,14 @@
     <div class="col-sm-6">
         <div class="mt-4 p-5 bg-success text-white rounded shadow-lg">
             <h1>Join Room</h1> 
-            <p>Join existing room by enter room number.</p> 
-            <form class="bottomPadding">
+            <p>Join existing room by enter room id.</p> 
+            <form [formGroup]="cardForm" class="bottomPadding">
                 <div class="row">
                   <div class="col">
-                    <input type="text" class="form-control" placeholder="Enter room number" name="room">
+                    <input type="text" class="form-control" placeholder="Enter room id" formControlName="roomId" autofocus>
                   </div>
                   <div class="col">
-                    <button (click)="joinRoom()" type="button" class="btn btn-warning">Join a session</button>
+                    <button (click)="checkRoomIsExistOrNot()" type="button" class="btn btn-warning">Join a session</button>
                   </div>
                 </div>
               </form>
@@ -38,4 +38,16 @@
     </div>
 
 </div>
+
+<!-- <div class="container-fluid py-3">
+  <h1>Angular Toastr</h1>
+
+  <div class="d-grid gap-2 col-4 mx-auto">
+    <button type="button" class="btn btn-sm btn-success" (click)="showSuccess()">Success</button>
+    <button type="button" class="btn btn-sm btn-info" (click)="showInfo()">Info</button>
+    <button type="button" class="btn btn-sm btn-warning" (click)="showWarning()">Warning</button>
+    <button type="button" class="btn btn-sm btn-danger" (click)="showError()">Error</button>
+  </div>
+</div> -->
+
 

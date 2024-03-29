@@ -1,3 +1,28 @@
-<form>
-    <input type="text" placeholder="Enter your name">
-</form>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card mt-5">
+                <div class="card-body text-center topPadding shadow bg-white rounded">
+                    <h2 class="text-success">{{roomStatus}}</h2>
+                    <br>
+                    <h6>You're joining as <b class="text-success">{{userRole}}</b></h6>
+                    <h6>Room ID: {{currentSession.roomId}}</h6>
+                    
+                    
+                    <form [formGroup]="cardForm" class="myform">
+                        <input type="text" formControlName="username"
+                            class="form-control"
+                            placeholder="Enter your name to start your session"
+                            required autofocus>
+                        <br>
+                        <button (click)="setUsername()"
+                            class="btn btn-success btn-block shadow"
+                            type="button">Join Now!</button>
+                    
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

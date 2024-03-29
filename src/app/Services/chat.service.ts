@@ -1,32 +1,44 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { io } from "socket.io-client";
-
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
+import { Socket, io } from "socket.io-client";
+import { v4 as uuid } from "uuid";
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ChatService {
-    public message$: BehaviorSubject<string> = new BehaviorSubject('');
-  
-    socket = io('http://localhost:3000');
-  
-    public sendMessage(message:any) {
-      this.socket.emit('message', message);
-    }
-  
-    public getNewMessage = () => {
-      this.socket.on('message', (message) =>{
-        this.message$.next(message);
-      });
-      
-      return this.message$.asObservable();
-    };
+  public message$: BehaviorSubject<string> = new BehaviorSubject("");
+  public room$: BehaviorSubject<string> = new BehaviorSubject("");
 
-    public createRoom(roomName:string){
-        this.socket.emit('create', roomName);
-    }
+  socket = io("http://localhost:3000");
 
-    public setUsername(name:string){
-        this.socket.emit('setUsername',name);
-    }
+  constructor(private http: HttpClient) {}
+
+  generateUniqueId(): string {
+    const id: string = uuid();
+    return id;
+  }
+
+  createChannel(channelId: string): void {
+    this.socket.emit("createChannel", channelId);
+  }
+
+  getAllChannel(): Observable<any[]> {
+    return this.http.get<any[]>(`http://localhost:3000/api/active-channels`);
+  }
+
+  //Send complete object with ChannelId and username
+  joinChannel(channelId: string): void {
+    this.socket.emit("joinChannel", channelId);
+  }
+
+  sendMessageInRoom(messageData: any): void {
+    this.socket.emit("sendMessage", messageData);
+  }
+
+  receiveMessage(channelId: any): Observable<any[]> {
+    return this.http.get<any[]>(
+      `http://localhost:3000/api/messages/${channelId}`
+    );
+  }
 }

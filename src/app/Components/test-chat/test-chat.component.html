@@ -1,0 +1,18 @@
+<p>Test component</p>
+
+<!-- <div *ngFor="let message of messages">
+   <p>{{ message.text }}</p>
+   <small>By: {{ message.sender }}</small>
+ </div> -->
+
+ <div>
+   {{messages[0]}}
+ </div>
+ 
+ <div>
+   <button (click)="sendMessage()" type="submit">Send</button>
+</div>
+<br>
+ <div>
+   <button (click)="receiveMsg()">Receive Msg</button>
+ </div>
