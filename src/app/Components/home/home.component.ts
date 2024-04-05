@@ -36,22 +36,20 @@ export class HomeComponent {
     this.authService.removeAllSession();
   }
 
+  //Create only session when user click on create room
   createRoom(): void {
     let uniqueId = this.chatService.generateUniqueId();
-    this.chatService.createChannel(uniqueId);
     this.authService.createRoomSession(uniqueId);
     this.route.navigateByUrl("/card");
   }
 
+  //for join user, i will update it later
   checkRoomIsExistOrNot(): void {
     let _roomId = this.cardForm.get("roomId")?.value;
     if (_roomId) {
-      //   let data = this.authService.getCurrentSession();
-      // this.chatService.getAllChannel().subscribe((res) => {
-      //   debugger;
-      //   console.log(res);
-      // });
-      this.route.navigateByUrl("/card");
+      //this.chatService.joinChannel("",_roomId);
+      //this.chatService.getAllRooms();
+      //this.route.navigateByUrl("/card");
     } else {
       alert("Please provide room Id to join session");
     }

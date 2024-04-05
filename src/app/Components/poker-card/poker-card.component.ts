@@ -10,6 +10,7 @@ import {
 } from "@angular/forms";
 import { NotificationComponent } from "../../Shared/Components/notification/notification.component";
 import { Router } from "@angular/router";
+import { ChatService } from "../../Services/chat.service";
 
 @Component({
   selector: "app-poker-card",
@@ -25,14 +26,17 @@ export class PokerCardComponent implements OnInit {
   roomStatus!: string;
   userRole!:string;
 
-  constructor(private authService: AuthService, private fb: FormBuilder,private route: Router) {
+  constructor(private authService: AuthService,private chatService:ChatService, private fb: FormBuilder,private route: Router) {
     this.currentSession = this.authService.getCurrentSession();
-    if (this.currentSession.IsObserver) {
-      this.roomStatus = "Your room is live now!";
+    if (this.currentSession.isObserver) {
+      this.roomStatus = "Your room is ready to live!";
       this.userRole = "Observer";
     } else {
       this.roomStatus = "Your room is still active!";
       this.userRole = "Developer";
+    }
+    if(this.currentSession.username !=""){
+      this.route.navigateByUrl("/room");
     }
     this.cardForm = this.fb.group({
       username: [null, Validators.required],
@@ -40,17 +44,31 @@ export class PokerCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("Card loaded!");
+  }
+
+  ngDoCheck():void{
+    this.isLoggedIn();
   }
 
   setUsername(): void {
     let _username = this.cardForm.get("username")?.value;
     if (_username) {
       this.authService.setUsernameInSession(_username, this.currentSession);
+      //Now user ready for live
+      this.chatService.createRoom();
+      //user entered in the room
       this.route.navigateByUrl("/room");
     } else {
       //show error for username should not be null
       alert("Please enter your name.");
     }
   }
+
+  isLoggedIn():void{
+    let AmILoggedIn = this.authService.isLoggedIn();
+    if (!AmILoggedIn) {
+      this.route.navigateByUrl("/");
+    }
+  }
+
 }

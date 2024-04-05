@@ -2,141 +2,161 @@
 
 <div class="row">
     <div class="col-sm-6">
-        <p>Session ID: 45345456</p>
-        <h3>Mahipal</h3>
-        <form >
+        <p>Session ID: {{currentSession.roomId}}</p>
+        <h3>{{currentSession.username | titlecase}}</h3>
+        <label>You are {{currentSession.isObserver?
+            "Observer":"Player"}}</label>
+        <form [formGroup]="cardForm">
             <div class="mb-3 mt-3">
-              <label for="description" class="form-label">Story Description:</label>
-              <textarea class="form-control" rows="2" id="description" placeholder="Enter story description"></textarea>
-              
+                <label for="description" class="form-label">Story
+                    Description:</label>
+                <textarea formControlName="sdescription" class="form-control"
+                    rows="2" id="description"
+                    placeholder="Enter story description"></textarea>
             </div>
-            
-                <button type="button" (click)="clearVotes()" style="margin-right: 15px;" class="btn btn-danger shadow-lg">Clear Votes</button>
-                <button type="button" (click)="changeShowHideVotes()" class="btn btn-success shadow-lg">{{isShowVotes? "Show Votes":"Hide Votes"}}</button>
-            
-          </form>
-          <br>
-          @if (!isShowVotes) {
-            <div class="col-sm-12">
-                <div class="mt-4 p-3 bg-gradient text-black rounded shadow-lg text-center">
-                    <h3>Avarage Point: 3</h3> 
-                </div>
+            <button type="button" (click)="clearVotes()"
+                style="margin-right: 15px;"
+                class="btn btn-danger shadow-lg">Clear Votes</button>
+            <button type="button" (click)="changeShowHideVotes()"
+                class="btn btn-success shadow-lg">{{isShowVotes?
+                "Show Votes":"Hide Votes"}}</button>
+        </form>
+        <br>
+        <button (click)="getAllUsers()">Get All users</button> | <button
+            (click)="setStoryDescription()">Set Story Description</button> |
+        <button (click)="getStoryDescription()">Get Story Description</button>
+        <br>
+        @if (!isShowVotes) {
+        <div class="col-sm-12">
+            <div
+                class="mt-4 p-3 bg-gradient text-black rounded shadow-lg text-center">
+                <h3>Avarage Point: 3</h3>
             </div>
+        </div>
         }
-          <br>
+        <br>
     </div>
     <div class="col-sm-6">
         <p>These players are going to vote.</p>
         <table class="table table-striped shadow-lg">
             <thead>
-              <tr>
-                <th>SrNo</th>
-                <th>Player</th>
-                <th>Points</th>
-              </tr>
+                <tr>
+                    <th>SrNo</th>
+                    <th>Player</th>
+                    <th>Points</th>
+                </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Mahipal</td>
-                <td>
-                    @if (isShowVotes) {
-                        <span class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    }@else {
+                <tr>
+                    <td>1</td>
+                    <td>Mahipal</td>
+                    <td>
+                        @if (isShowVotes) {
+                        <span
+                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }@else {
                         <span class="badge rounded-pill bg-success">4</span>
-                    }
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Kiran</td>
-                <td>
-                    @if (isShowVotes) {
-                        <span class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    }@else {
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Kiran</td>
+                    <td>
+                        @if (isShowVotes) {
+                        <span
+                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }@else {
                         <span class="badge rounded-pill bg-success">4</span>
-                    }
-                </td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Ayesha</td>
-                <td>
-                    @if (isShowVotes) {
-                        <span class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    }@else {
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Ayesha</td>
+                    <td>
+                        @if (isShowVotes) {
+                        <span
+                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }@else {
                         <span class="badge rounded-pill bg-success">4</span>
-                    }
-                </td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>Shwetha</td>
-                <td>
-                    @if (isShowVotes) {
-                        <span class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    }@else {
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Shwetha</td>
+                    <td>
+                        @if (isShowVotes) {
+                        <span
+                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }@else {
                         <span class="badge rounded-pill bg-success">4</span>
-                    }
-                </td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>Malay</td>
-                <td>
-                    @if (isShowVotes) {
-                        <span class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    }@else {
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Malay</td>
+                    <td>
+                        @if (isShowVotes) {
+                        <span
+                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }@else {
                         <span class="badge rounded-pill bg-success">4</span>
-                    }
-                </td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>Shwetha</td>
-                <td>
-                    @if (isShowVotes) {
-                        <span class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    }@else {
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Shwetha</td>
+                    <td>
+                        @if (isShowVotes) {
+                        <span
+                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }@else {
                         <span class="badge rounded-pill bg-success">4</span>
-                    }
-                </td>
-              </tr>
-              <tr>
-                <td>7</td>
-                <td>Malay</td>
-                <td>
-                    @if (isShowVotes) {
-                        <span class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    }@else {
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Malay</td>
+                    <td>
+                        @if (isShowVotes) {
+                        <span
+                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }@else {
                         <span class="badge rounded-pill bg-success">4</span>
-                    }
-                </td>
-              </tr>
-              <tr>
-                <td>8</td>
-                <td>Shwetha</td>
-                <td>
-                    @if (isShowVotes) {
-                        <span class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    }@else {
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Shwetha</td>
+                    <td>
+                        @if (isShowVotes) {
+                        <span
+                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }@else {
                         <span class="badge rounded-pill bg-success">4</span>
-                    }
-                </td>
-              </tr>
-              <tr>
-                <td>9</td>
-                <td>Malay</td>
-                <td>
-                    @if (isShowVotes) {
-                        <span class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    }@else {
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Malay</td>
+                    <td>
+                        @if (isShowVotes) {
+                        <span
+                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        }@else {
                         <span class="badge rounded-pill bg-success">4</span>
-                    }
-                </td>
-              </tr>
+                        }
+                    </td>
+                </tr>
             </tbody>
-          </table>
+        </table>
     </div>
-    
+
 </div>

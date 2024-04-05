@@ -1,8 +1,10 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { Socket, io } from "socket.io-client";
 import { v4 as uuid } from "uuid";
+import { ISession } from "../Shared/Models/iSession";
+import { AuthService } from "./auth.service";
 @Injectable({
   providedIn: "root",
 })
@@ -12,33 +14,46 @@ export class ChatService {
 
   socket = io("http://localhost:3000");
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private authService:AuthService) {}
 
+  //Generate unique room id
   generateUniqueId(): string {
     const id: string = uuid();
     return id;
   }
 
-  createChannel(channelId: string): void {
-    this.socket.emit("createChannel", channelId);
+  //When user click on Join Now
+  createRoom(): void {
+    let data = this.authService.getCurrentSession();
+    this.socket.emit("joinRoom", data);
   }
 
-  getAllChannel(): Observable<any[]> {
-    return this.http.get<any[]>(`http://localhost:3000/api/active-channels`);
+  //Get all user list
+  getAllUsers(): Observable<any> {
+    return new Observable<any>((observer) => {
+      this.socket.on("allUsers", (data) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
   }
 
-  //Send complete object with ChannelId and username
-  joinChannel(channelId: string): void {
-    this.socket.emit("joinChannel", channelId);
+  //when observer update story desscription 
+  setStoryDescription(data: any): void {
+    this.socket.emit("storyDescription", data);
   }
 
-  sendMessageInRoom(messageData: any): void {
-    this.socket.emit("sendMessage", messageData);
-  }
-
-  receiveMessage(channelId: any): Observable<any[]> {
-    return this.http.get<any[]>(
-      `http://localhost:3000/api/messages/${channelId}`
-    );
+  //Get story description for other user (not observer)
+  getStoryDescription(): Observable<any> {
+    return new Observable<any>((observer) => {
+      this.socket.on("newStoryDescription", (data) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
   }
 }

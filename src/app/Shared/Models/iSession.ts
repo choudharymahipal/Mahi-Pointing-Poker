@@ -1,5 +1,10 @@
 export interface ISession {
   roomId: string;
-  IsObserver: boolean;
+  isObserver: boolean;
   username: string;
+}
+
+export interface IStoryDescription {
+  roomId: string;
+  storyDescription: string;
 }
