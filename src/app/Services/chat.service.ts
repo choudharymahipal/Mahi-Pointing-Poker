@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { Socket, io } from "socket.io-client";
 import { v4 as uuid } from "uuid";
-import { ISession } from "../Shared/Models/iSession";
+import { ISession, IStoryDescription } from "../Shared/Models/iSession";
 import { AuthService } from "./auth.service";
 @Injectable({
   providedIn: "root",
@@ -14,7 +14,7 @@ export class ChatService {
 
   socket = io("http://localhost:3000");
 
-  constructor(private http: HttpClient,private authService:AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   //Generate unique room id
   generateUniqueId(): string {
@@ -28,9 +28,21 @@ export class ChatService {
     this.socket.emit("joinRoom", data);
   }
 
+  //Get all rooms list
+  getAllRooms():Observable<string[]>{
+    return new Observable<string[]>((observer) => {
+      this.socket.on("allRooms", (rooms) => {
+        observer.next(rooms);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
+  }
+
   //Get all user list
-  getAllUsers(): Observable<any> {
-    return new Observable<any>((observer) => {
+  getAllUsers(): Observable<ISession[]> {
+    return new Observable<ISession[]>((observer) => {
       this.socket.on("allUsers", (data) => {
         observer.next(data);
       });
@@ -40,15 +52,15 @@ export class ChatService {
     });
   }
 
-  //when observer update story desscription 
+  //when observer update story desscription
   setStoryDescription(data: any): void {
     this.socket.emit("storyDescription", data);
   }
 
   //Get story description for other user (not observer)
-  getStoryDescription(): Observable<any> {
-    return new Observable<any>((observer) => {
-      this.socket.on("newStoryDescription", (data) => {
+  getStoryDescription(): Observable<IStoryDescription[]> {
+    return new Observable<IStoryDescription[]>((observer) => {
+      this.socket.on("allStories", (data) => {
         observer.next(data);
       });
       return () => {
@@ -56,4 +68,7 @@ export class ChatService {
       };
     });
   }
+
+ 
+
 }

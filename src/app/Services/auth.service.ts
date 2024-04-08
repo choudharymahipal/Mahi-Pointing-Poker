@@ -43,15 +43,8 @@ export class AuthService {
   }
 
   setUsernameInSession(username: string, currentSession: ISession): void {
-    if (currentSession.isObserver) {
-      //Update session and socket api for admin
-      //No need to check duplicate username for admin because observer can not be multiple in a single room.
-      currentSession.username = username;
-      sessionStorage.setItem("userDetails", JSON.stringify(currentSession));
-    } else {
-      //Update session and socket api for other users.
-      //check duplicate username because user can be multiple in a single room.
-    }
+    currentSession.username = username;
+    sessionStorage.setItem("userDetails", JSON.stringify(currentSession));
   }
 
   //User logged in with username or not

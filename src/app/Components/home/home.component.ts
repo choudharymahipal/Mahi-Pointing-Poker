@@ -19,6 +19,7 @@ import {
 })
 export class HomeComponent {
   cardForm!: FormGroup;
+  allRooms: any[] = [];
 
   constructor(
     private route: Router,
@@ -36,6 +37,18 @@ export class HomeComponent {
     this.authService.removeAllSession();
   }
 
+  ngDoCheck(): void {
+    this.getAllRooms();
+  }
+
+  getAllRooms(): void {
+    this.chatService.getAllRooms().subscribe((data: string[]) => {
+      console.log("rooms: ", data);
+      this.allRooms = [];
+      this.allRooms = data;
+    });
+  }
+
   //Create only session when user click on create room
   createRoom(): void {
     let uniqueId = this.chatService.generateUniqueId();
@@ -43,19 +56,22 @@ export class HomeComponent {
     this.route.navigateByUrl("/card");
   }
 
-  //for join user, i will update it later
+  //for join user
   checkRoomIsExistOrNot(): void {
     let _roomId = this.cardForm.get("roomId")?.value;
     if (_roomId) {
-      //this.chatService.joinChannel("",_roomId);
-      //this.chatService.getAllRooms();
-      //this.route.navigateByUrl("/card");
+      //check room is active or not
+      if (this.allRooms.find((x: any) => x === _roomId)) {
+        this.authService.joinRoomSession(_roomId);
+        this.route.navigateByUrl("/card");
+      } else {
+        alert("Room not found");
+      }
     } else {
       alert("Please provide room Id to join session");
     }
   }
 
-  joinRoom(): void {}
 
   //Toast
   // public showSuccess(): void {

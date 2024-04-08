@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "app-poker-room",
   standalone: true,
-  imports: [ReactiveFormsModule,PokerCardComponent,CommonModule],
+  imports: [ReactiveFormsModule, PokerCardComponent, CommonModule],
   templateUrl: "./poker-room.component.html",
   styleUrl: "./poker-room.component.scss",
 })
@@ -20,6 +20,8 @@ export class PokerRoomComponent implements OnInit {
   isShowVotes: boolean = true;
   cardForm!: FormGroup;
   currentSession!: ISession;
+  allRooms: any[] = [];
+  allUsers: ISession[] = [];
 
   constructor(
     private readonly authService: AuthService,
@@ -38,7 +40,24 @@ export class PokerRoomComponent implements OnInit {
 
   ngDoCheck(): void {
     this.isLoggedIn();
+    this.getAllRooms();
     this.getAllUsers();
+    this.getStoryDescription();
+  }
+
+  getAllRooms(): void {
+    this.chatService.getAllRooms().subscribe((data: string[]) => {
+      this.allRooms = [];
+      this.allRooms = data;
+    });
+  }
+
+  //Get All users details
+  getAllUsers(): void {
+    this.chatService.getAllUsers().subscribe((data: ISession[]) => {
+      this.allUsers = [];
+      this.allUsers = data;
+    });
   }
 
   //set story description
@@ -53,16 +72,21 @@ export class PokerRoomComponent implements OnInit {
 
   //get story description
   getStoryDescription(): void {
-    this.chatService.getStoryDescription().subscribe((data:any) => {
-      console.log("Story Description:", data);
-    });
-  }
-
-  //Get All players details
-  getAllUsers(): void {
-    this.chatService.getAllUsers().subscribe((data:any) => {
-      console.log("All Users:", data);
-    });
+    this.chatService
+      .getStoryDescription()
+      .subscribe((data: IStoryDescription[]) => {
+        console.log("Stories: ", data);
+        if (data.length) {
+          for (let index = 0; index < data.length; index++) {
+            if (data[index].roomId === this.currentSession.roomId) {
+              this.cardForm
+                .get("sdescription")
+                ?.setValue(data[index].storyDescription);
+              break;
+            }
+          }
+        }
+      });
   }
 
   changeShowHideVotes() {
@@ -79,6 +103,20 @@ export class PokerRoomComponent implements OnInit {
     let AmILoggedIn = this.authService.isLoggedIn();
     if (!AmILoggedIn) {
       this.route.navigateByUrl("/");
+    }
+  }
+
+  btn_storyPoint(id: any) {
+    if (id === 0) {
+      alert("0.1 clicked");
+    } else if (id === 1) {
+      alert("1 clicked");
+    } else if (id === 2) {
+      alert("2 clicked");
+    } else if (id === 3) {
+      alert("3 clicked");
+    } else if (id === 5) {
+      alert("5 clicked");
     }
   }
 }
