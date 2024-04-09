@@ -3,7 +3,11 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { Socket, io } from "socket.io-client";
 import { v4 as uuid } from "uuid";
-import { ISession, IStoryDescription } from "../Shared/Models/iSession";
+import {
+  ISession,
+  IShowHide,
+  IStoryDescription,
+} from "../Shared/Models/iSession";
 import { AuthService } from "./auth.service";
 @Injectable({
   providedIn: "root",
@@ -16,6 +20,7 @@ export class ChatService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
+  //#region Rooms Activity
   //Generate unique room id
   generateUniqueId(): string {
     const id: string = uuid();
@@ -29,7 +34,7 @@ export class ChatService {
   }
 
   //Get all rooms list
-  getAllRooms():Observable<string[]>{
+  getAllRooms(): Observable<string[]> {
     return new Observable<string[]>((observer) => {
       this.socket.on("allRooms", (rooms) => {
         observer.next(rooms);
@@ -39,7 +44,9 @@ export class ChatService {
       };
     });
   }
+  //#endregion
 
+  //#region Users Activity
   //Get all user list
   getAllUsers(): Observable<ISession[]> {
     return new Observable<ISession[]>((observer) => {
@@ -51,7 +58,9 @@ export class ChatService {
       };
     });
   }
+  //#endregion
 
+  //#region Story Description Activity
   //when observer update story desscription
   setStoryDescription(data: any): void {
     this.socket.emit("storyDescription", data);
@@ -68,7 +77,22 @@ export class ChatService {
       };
     });
   }
+  //#endregion
 
- 
+  //#region Show Hide button Activity
+  setShowHide(data: IShowHide): void {
+    this.socket.emit("setShowHide", data);
+  }
 
+  getShowHide(): Observable<IShowHide[]> {
+    return new Observable<IShowHide[]>((observer) => {
+      this.socket.on("getAllShowHide", (data) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
+  }
+  //#endregion
 }

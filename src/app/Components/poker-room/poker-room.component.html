@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-sm-6">
         <p>Session ID: <label id="roomIdLabel">{{currentSession.roomId}}</label>
-            &nbsp; <button onclick="copyToClipboard()"
+            &nbsp; <button onclick="copyToClipboard(1)"
                 class="btn btn-sm btn-success">Copy</button> </p>
         <h3 id="currentUsername">{{currentSession.username | titlecase}}</h3>
         <label class="userRole">(You are {{currentSession.isObserver?
@@ -39,13 +39,15 @@
         @if (!isShowVotes) {
         <div class="col-sm-12">
             <div
-                class="mt-4 p-3 bg-gradient text-black rounded shadow-lg text-center">
-                <h3>Avarage Point: 3</h3>
+                class="mt-4 p-3 bg-gradient text-black rounded shadow-lg text-center avarageCard" >
+                <h3>Avarage Point</h3>
+                <h3>3</h3>
             </div>
         </div>
         }
         <br>
-        <!-- <button (click)="getStoryDescription()">Get Story Title</button> -->
+        <!-- <app-chat></app-chat>
+        <br> -->
     </div>
     <div class="col-sm-6">
         <div>
@@ -102,8 +104,8 @@
                 @for (item of allUsers; track item.roomId) {
                 @if(!item.isObserver && item.roomId === currentSession.roomId){
                 <tr>
-                    <td>{{item.username | titlecase}}</td>
-                    <td>
+                    <td class="font20">{{item.username | titlecase}}</td>
+                    <td class="font20">
                         @if (isShowVotes) {
                         <span
                             class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -119,7 +121,7 @@
         } @else{
         <div class="noPlayers">
             <p>No one has joined yet!</p>
-            <button onclick="copyToClipboard()"
+            <button onclick="copyToClipboard(2)"
                 class="btn btn-sm btn-info">Click here to copy the invitation
                 link</button>
         </div>

@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ChatService } from "../../../Services/chat.service";
 import { AuthService } from "../../../Services/auth.service";
 import { CommonModule } from "@angular/common";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-header",
@@ -15,6 +16,7 @@ export class HeaderComponent implements OnInit {
   isLoggedInWithUsername: boolean = false;
 
   constructor(
+    private router:Router,
     private readonly _chatService: ChatService,
     private readonly _authService: AuthService
   ) {}
@@ -30,6 +32,11 @@ export class HeaderComponent implements OnInit {
       let data = this._authService.getCurrentSession();
       this.username = data.username;
     }
+  }
+
+  reloadPage():void{
+    //remove this before deployment
+    this.router.navigateByUrl("/card");
   }
 
   logout():void{

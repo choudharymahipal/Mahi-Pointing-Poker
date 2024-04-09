@@ -4,14 +4,15 @@ import { PokerCardComponent } from "../poker-card/poker-card.component";
 import { AuthService } from "../../Services/auth.service";
 import { Router } from "@angular/router";
 import { ChatService } from "../../Services/chat.service";
-import { ISession, IStoryDescription } from "../../Shared/Models/iSession";
+import { ISession, IShowHide, IStoryDescription } from "../../Shared/Models/iSession";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { ChatComponent } from "../chat/chat.component";
 
 @Component({
   selector: "app-poker-room",
   standalone: true,
-  imports: [ReactiveFormsModule, PokerCardComponent, CommonModule],
+  imports: [ReactiveFormsModule, PokerCardComponent, CommonModule,ChatComponent],
   templateUrl: "./poker-room.component.html",
   styleUrl: "./poker-room.component.scss",
 })
@@ -42,6 +43,7 @@ export class PokerRoomComponent implements OnInit {
     this.getAllRooms();
     this.getAllUsers();
     this.getStoryDescription();
+    this.getShowHideButton();
   }
 
   ngDoCheck(): void {
@@ -102,9 +104,32 @@ export class PokerRoomComponent implements OnInit {
       });
   }
 
+  //#region Show hide Button Activity
   changeShowHideVotes() {
     this.isShowVotes = !this.isShowVotes;
+    let obj: IShowHide = {
+      roomId: this.currentSession.roomId,
+      isShow: this.isShowVotes,
+    };
+    //set show hide on the server
+    this.chatService.setShowHide(obj);
   }
+
+  getShowHideButton(): void {
+    this.chatService
+      .getShowHide()
+      .subscribe((data: IShowHide[]) => {
+        if (data.length) {
+          for (let index = 0; index < data.length; index++) {
+            if (data[index].roomId === this.currentSession.roomId) {
+              this.isShowVotes=data[index].isShow;
+              break;
+            }
+          }
+        }
+      });
+  }
+  //#endregion
 
   clearVotes() {
     //clear votes
@@ -137,4 +162,6 @@ export class PokerRoomComponent implements OnInit {
     }
     
   }
+
+
 }
