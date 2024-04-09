@@ -23,6 +23,19 @@
     })
   }
 </script> -->
+
+<script>
+  function copyToClipboard() {
+    var username = document.getElementById("currentUsername");
+    // Get the text
+    var copyText = document.getElementById("roomIdLabel");
+    copyText.value = "You are invited by "+username.innerText+",\nGo to https://choudharymahipal.github.io/Mahi-Pointing-Poker and enter your Room Id and click on Join a session.\nYour RoomId is " +copyText.innerText;
+    // Copy the text inside the text field
+    navigator.clipboard.writeText(copyText.value);
+    // Alert the copied text
+    alert("Copied the text: " + copyText.innerText);
+  }
+  </script>
 </head>
 <body>
   <app-root></app-root>

@@ -2,20 +2,24 @@
 
 <div class="row">
     <div class="col-sm-6">
-        <p>Session ID: {{currentSession.roomId}}</p>
-        <h3>{{currentSession.username | titlecase}}</h3>
-        <label>You are {{currentSession.isObserver?
-            "an observer":"a developer"}}</label>
+        <p>Session ID: <label id="roomIdLabel">{{currentSession.roomId}}</label>
+            &nbsp; <button onclick="copyToClipboard()"
+                class="btn btn-sm btn-success">Copy</button> </p>
+        <h3 id="currentUsername">{{currentSession.username | titlecase}}</h3>
+        <label class="userRole">(You are {{currentSession.isObserver?
+            "an Observer":"a Developer"}})</label>
+        @if (currentSession.isObserver) {
         <form [formGroup]="cardForm">
             <div class="mb-3 mt-3">
                 <label for="description" class="form-label">Story
                     Description:</label>
                 <textarea formControlName="sdescription"
-                    (click)="setStoryDescription()" class="form-control"
+                    (focusout)="setStoryDescription()" class="form-control"
                     rows="2" id="description"
                     placeholder="Enter story description"></textarea>
             </div>
-            @if (currentSession.isObserver) {
+            @if(showPlayerTable){
+            <!-- showHide button should be hidden if no one has participated -->
             <button type="button" (click)="clearVotes()"
                 style="margin-right: 15px;"
                 class="btn btn-danger shadow-lg">Clear Votes</button>
@@ -23,8 +27,14 @@
                 class="btn btn-success shadow-lg">{{isShowVotes?
                 "Show Votes":"Hide Votes"}}</button>
             }
-
         </form>
+        }@else {
+        <div class="mb-3 mt-3">
+            <label for="description" class="form-label">Story
+                Description:</label>
+            <div class="storyTitle">{{storyTitle}}</div>
+        </div>
+        }
         <br>
         @if (!isShowVotes) {
         <div class="col-sm-12">
@@ -35,28 +45,52 @@
         </div>
         }
         <br>
+        <!-- <button (click)="getStoryDescription()">Get Story Title</button> -->
     </div>
     <div class="col-sm-6">
         <div>
             <h5>Select story point:</h5>
-            <button type="button"
-                class="btn btn-primary shadow-lg storyPoint"
-                (click)="btn_storyPoint(0)">0.1</button>
-            <button type="button"
-                class="btn btn-success shadow-lg storyPoint"
-                (click)="btn_storyPoint(1)">1</button>
-            <button type="button"
-                class="btn btn-info shadow-lg storyPoint"
-                (click)="btn_storyPoint(2)">2</button>
-            <button type="button"
-                class="btn btn-warning shadow-lg storyPoint"
-                (click)="btn_storyPoint(3)">3</button>
-            <button type="button"
-                class="btn btn-danger shadow-lg storyPoint"
-                (click)="btn_storyPoint(5)">5</button>
+            <div class="storyPointBtn">
+                <div>
+                    <button type="button"
+                        class="btn btn-primary shadow-lg storyPoint"
+                        (click)="btn_storyPoint(0)">0.5</button>
+                    <br><span class="text-sm-center smallFont">(1-3
+                        hours)</span>
+                </div>
+                <div>
+                    <button type="button"
+                        class="btn btn-success shadow-lg storyPoint"
+                        (click)="btn_storyPoint(1)">1</button>
+                    <br><span class="text-sm-center smallFont">(4-6
+                        hours)</span>
+                </div>
+                <div>
+                    <button type="button"
+                        class="btn btn-info shadow-lg storyPoint"
+                        (click)="btn_storyPoint(2)">2</button>
+                    <br><span class="text-sm-center smallFont">(8-12
+                        hours)</span>
+                </div>
+                <div>
+                    <button type="button"
+                        class="btn btn-warning shadow-lg storyPoint"
+                        (click)="btn_storyPoint(3)">3</button>
+                    <br><span class="text-sm-center smallFont">(13-17
+                        hours)</span>
+                </div>
+                <div>
+                    <button type="button"
+                        class="btn btn-danger shadow-lg storyPoint"
+                        (click)="btn_storyPoint(5)">5</button>
+                    <br><span class="text-sm-center smallFont">(18+
+                        hours)</span>
+                </div>
+            </div>
         </div>
         <hr>
         <h5>These players are going to vote.</h5>
+        @if(showPlayerTable){
         <table class="table table-striped shadow-lg">
             <thead>
                 <tr>
@@ -82,6 +116,15 @@
                 }
             </tbody>
         </table>
+        } @else{
+        <div class="noPlayers">
+            <p>No one has joined yet!</p>
+            <button onclick="copyToClipboard()"
+                class="btn btn-sm btn-info">Click here to copy the invitation
+                link</button>
+        </div>
+        }
+
     </div>
 
 </div>

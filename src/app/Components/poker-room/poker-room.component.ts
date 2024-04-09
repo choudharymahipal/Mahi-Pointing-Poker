@@ -22,6 +22,8 @@ export class PokerRoomComponent implements OnInit {
   currentSession!: ISession;
   allRooms: any[] = [];
   allUsers: ISession[] = [];
+  storyTitle: string = "";
+  showPlayerTable: boolean = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -36,13 +38,14 @@ export class PokerRoomComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
-
-  ngDoCheck(): void {
-    this.isLoggedIn();
+  ngOnInit(): void {
     this.getAllRooms();
     this.getAllUsers();
     this.getStoryDescription();
+  }
+
+  ngDoCheck(): void {
+    this.isLoggedIn();
   }
 
   getAllRooms(): void {
@@ -57,6 +60,13 @@ export class PokerRoomComponent implements OnInit {
     this.chatService.getAllUsers().subscribe((data: ISession[]) => {
       this.allUsers = [];
       this.allUsers = data;
+      let playersData = this.allUsers.find((m) =>m.isObserver === false && m.roomId === this.currentSession.roomId);
+      if (playersData) {
+        this.showPlayerTable = true;
+      } else {
+        this.showPlayerTable = false;
+      }
+      console.log(this.showPlayerTable);
     });
   }
 
@@ -75,13 +85,16 @@ export class PokerRoomComponent implements OnInit {
     this.chatService
       .getStoryDescription()
       .subscribe((data: IStoryDescription[]) => {
-        console.log("Stories: ", data);
+        //console.log("Stories: ", data);
         if (data.length) {
           for (let index = 0; index < data.length; index++) {
             if (data[index].roomId === this.currentSession.roomId) {
+              //Set for observer
               this.cardForm
                 .get("sdescription")
                 ?.setValue(data[index].storyDescription);
+                //set for players
+                this.storyTitle=data[index].storyDescription;
               break;
             }
           }
@@ -107,16 +120,21 @@ export class PokerRoomComponent implements OnInit {
   }
 
   btn_storyPoint(id: any) {
-    if (id === 0) {
-      alert("0.1 clicked");
-    } else if (id === 1) {
-      alert("1 clicked");
-    } else if (id === 2) {
-      alert("2 clicked");
-    } else if (id === 3) {
-      alert("3 clicked");
-    } else if (id === 5) {
-      alert("5 clicked");
+    if(this.currentSession.isObserver){
+      alert("You are an observer. You don't need to give story points.");
+    }else{
+      if (id === 0) {
+        alert("0.5 clicked");
+      } else if (id === 1) {
+        alert("1 clicked");
+      } else if (id === 2) {
+        alert("2 clicked");
+      } else if (id === 3) {
+        alert("3 clicked");
+      } else if (id === 5) {
+        alert("5 clicked");
+      }
     }
+    
   }
 }

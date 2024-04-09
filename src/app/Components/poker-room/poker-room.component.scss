@@ -1,5 +1,31 @@
 .storyPoint{
     margin-right: 15px;
     margin-top: 15px;
+    margin-left: 15px;
     width: 70px;
+}
+
+.storyTitle{
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 5px 10px 5px 10px;
+    min-height: 60px;
+}
+
+.userRole{
+    color:#adb5bd;
+}
+
+.noPlayers{
+    text-align: center;
+    padding: 50px;
+}
+
+.storyPointBtn{
+    text-align: center;
+    display: flex;
+}
+
+.smallFont{
+    font-size: 12px;
 }
