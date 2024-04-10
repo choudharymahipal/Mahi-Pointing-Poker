@@ -1,8 +1,7 @@
-
-
 <div class="row">
+    
     <div class="col-sm-6">
-        <p>Session ID: <label id="roomIdLabel">{{currentSession.roomId}}</label>
+        <p>Room ID: <label id="roomIdLabel">{{currentSession.roomId}}</label>
             &nbsp; <button onclick="copyToClipboard(1)"
                 class="btn btn-sm btn-success">Copy</button> </p>
         <h3 id="currentUsername">{{currentSession.username | titlecase}}</h3>
@@ -39,9 +38,9 @@
         @if (!isShowVotes) {
         <div class="col-sm-12">
             <div
-                class="mt-4 p-3 bg-gradient text-black rounded shadow-lg text-center avarageCard" >
-                <h3>Avarage Point</h3>
-                <h3>3</h3>
+                class="mt-4 p-3 bg-gradient text-black rounded shadow-lg text-center avarageCard">
+                <h3>Average Point</h3>
+                <h3>{{avgStoryPoint}}</h3>
             </div>
         </div>
         }
@@ -101,7 +100,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for (item of allUsers; track item.roomId) {
+                @for (item of allUsersWithSP; track item.roomId) {
                 @if(!item.isObserver && item.roomId === currentSession.roomId){
                 <tr>
                     <td class="font20">{{item.username | titlecase}}</td>
@@ -110,7 +109,8 @@
                         <span
                             class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         }@else {
-                        <span class="badge rounded-pill bg-success">4</span>
+                        <span
+                            class="badge rounded-pill bg-success">{{item.storyPoint}}</span>
                         }
                     </td>
                 </tr>
@@ -126,7 +126,6 @@
                 link</button>
         </div>
         }
-
     </div>
 
 </div>

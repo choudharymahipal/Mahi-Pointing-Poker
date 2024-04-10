@@ -28,7 +28,8 @@ import { FooterComponent } from "./Shared/Components/footer/footer.component";
 export class AppComponent {
   newMessage!: string;
   messageList: string[] = [];
-
+  userJoinedRoom:boolean=false;
+  
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {}

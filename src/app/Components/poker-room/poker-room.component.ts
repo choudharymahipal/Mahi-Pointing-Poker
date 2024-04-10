@@ -4,15 +4,27 @@ import { PokerCardComponent } from "../poker-card/poker-card.component";
 import { AuthService } from "../../Services/auth.service";
 import { Router } from "@angular/router";
 import { ChatService } from "../../Services/chat.service";
-import { ISession, IShowHide, IStoryDescription } from "../../Shared/Models/iSession";
+import {
+  IAllUsersWithSP,
+  IEstimation,
+  ISession,
+  IShowHide,
+  IStoryDescription,
+} from "../../Shared/Models/iSession";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { ChatComponent } from "../chat/chat.component";
+import { AppComponent } from "../../app.component";
 
 @Component({
   selector: "app-poker-room",
   standalone: true,
-  imports: [ReactiveFormsModule, PokerCardComponent, CommonModule,ChatComponent],
+  imports: [
+    ReactiveFormsModule,
+    PokerCardComponent,
+    CommonModule,
+    ChatComponent,
+  ],
   templateUrl: "./poker-room.component.html",
   styleUrl: "./poker-room.component.scss",
 })
@@ -25,15 +37,21 @@ export class PokerRoomComponent implements OnInit {
   allUsers: ISession[] = [];
   storyTitle: string = "";
   showPlayerTable: boolean = false;
+  allUsersWithSP: IAllUsersWithSP[] = [];
+  avgStoryPoint: number = 0;
+  isOnline: boolean = false;
 
   constructor(
     private readonly authService: AuthService,
     private route: Router,
     private chatService: ChatService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private appCom:AppComponent
   ) {
+    this.appCom.userJoinedRoom=true;
     this.currentSession = this.authService.getCurrentSession();
-    this.socket = io("http://localhost:3000");
+    //this.socket = io("http://localhost:3000");
+    this.socket = io("https://mahi-pointing-poker-api.onrender.com");
     this.cardForm = this.fb.group({
       sdescription: [null],
     });
@@ -44,6 +62,7 @@ export class PokerRoomComponent implements OnInit {
     this.getAllUsers();
     this.getStoryDescription();
     this.getShowHideButton();
+    this.getAllStoryPoints();
   }
 
   ngDoCheck(): void {
@@ -54,15 +73,31 @@ export class PokerRoomComponent implements OnInit {
     this.chatService.getAllRooms().subscribe((data: string[]) => {
       this.allRooms = [];
       this.allRooms = data;
+      if (this.allRooms.find((m) => m === this.currentSession.roomId)) {
+        this.isOnline = true;
+      } else {
+        this.isOnline = false;
+      }
     });
   }
 
   //Get All users details
   getAllUsers(): void {
     this.chatService.getAllUsers().subscribe((data: ISession[]) => {
+      this.allUsersWithSP = [];
       this.allUsers = [];
       this.allUsers = data;
-      let playersData = this.allUsers.find((m) =>m.isObserver === false && m.roomId === this.currentSession.roomId);
+      for (const element of this.allUsers) {
+        this.allUsersWithSP.push({
+          roomId: element.roomId,
+          username: element.username,
+          isObserver: element.isObserver,
+          storyPoint: 0,
+        });
+      }
+      let playersData = this.allUsers.find(
+        (m) => m.isObserver === false && m.roomId === this.currentSession.roomId
+      );
       if (playersData) {
         this.showPlayerTable = true;
       } else {
@@ -89,14 +124,14 @@ export class PokerRoomComponent implements OnInit {
       .subscribe((data: IStoryDescription[]) => {
         //console.log("Stories: ", data);
         if (data.length) {
-          for (let index = 0; index < data.length; index++) {
-            if (data[index].roomId === this.currentSession.roomId) {
+          for (const element of data) {
+            if (element.roomId === this.currentSession.roomId) {
               //Set for observer
               this.cardForm
                 .get("sdescription")
-                ?.setValue(data[index].storyDescription);
-                //set for players
-                this.storyTitle=data[index].storyDescription;
+                ?.setValue(element.storyDescription);
+              //set for players
+              this.storyTitle = element.storyDescription;
               break;
             }
           }
@@ -107,27 +142,30 @@ export class PokerRoomComponent implements OnInit {
   //#region Show hide Button Activity
   changeShowHideVotes() {
     this.isShowVotes = !this.isShowVotes;
+    if (!this.isShowVotes) {
+      this.calulateAvg();
+    }
     let obj: IShowHide = {
       roomId: this.currentSession.roomId,
       isShow: this.isShowVotes,
+      averagePoint: this.avgStoryPoint,
     };
     //set show hide on the server
     this.chatService.setShowHide(obj);
   }
 
   getShowHideButton(): void {
-    this.chatService
-      .getShowHide()
-      .subscribe((data: IShowHide[]) => {
-        if (data.length) {
-          for (let index = 0; index < data.length; index++) {
-            if (data[index].roomId === this.currentSession.roomId) {
-              this.isShowVotes=data[index].isShow;
-              break;
-            }
+    this.chatService.getShowHide().subscribe((data: IShowHide[]) => {
+      if (data.length) {
+        for (const element of data) {
+          if (element.roomId === this.currentSession.roomId) {
+            this.isShowVotes = element.isShow;
+            this.avgStoryPoint = element.averagePoint;
+            break;
           }
         }
-      });
+      }
+    });
   }
   //#endregion
 
@@ -144,24 +182,65 @@ export class PokerRoomComponent implements OnInit {
     }
   }
 
+  //#region Story Point Activity
   btn_storyPoint(id: any) {
-    if(this.currentSession.isObserver){
+    if (this.currentSession.isObserver) {
       alert("You are an observer. You don't need to give story points.");
-    }else{
+    } else {
+      let obj: IEstimation = {
+        roomId: this.currentSession.roomId,
+        username: this.currentSession.username,
+        storyPoint: 0,
+      };
       if (id === 0) {
-        alert("0.5 clicked");
+        obj.storyPoint = 0.5;
       } else if (id === 1) {
-        alert("1 clicked");
+        obj.storyPoint = 1;
       } else if (id === 2) {
-        alert("2 clicked");
+        obj.storyPoint = 2;
       } else if (id === 3) {
-        alert("3 clicked");
+        obj.storyPoint = 3;
       } else if (id === 5) {
-        alert("5 clicked");
+        obj.storyPoint = 5;
       }
+      this.chatService.setStoryPoint(obj);
     }
-    
   }
 
+  getAllStoryPoints(): void {
+    this.chatService.getStoryPoint().subscribe((data: IEstimation[]) => {
+      if (data.length) {
+        for (const element of data) {
+          if (element.roomId === this.currentSession.roomId) {
+            let indexToUpdate = this.allUsersWithSP.findIndex(
+              (a) =>
+                a.roomId === element.roomId &&
+                a.username === element.username &&
+                a.isObserver === false
+            );
+            this.allUsersWithSP[indexToUpdate].storyPoint = element.storyPoint;
+          }
+        }
+      }
+    });
+  }
+  //#endregion
 
+  calulateAvg(): void {
+    this.avgStoryPoint = 0;
+    //get only participated value
+    let totalCount = 0;
+    let totalActiveUsers = 0;
+    for (let index = 0; index < this.allUsersWithSP.length; index++) {
+      if (
+        this.allUsersWithSP[index].roomId === this.currentSession.roomId &&
+        this.allUsersWithSP[index].isObserver === false &&
+        this.allUsersWithSP[index].storyPoint > 0
+      ) {
+        totalCount += this.allUsersWithSP[index].storyPoint;
+        totalActiveUsers++;
+      }
+    }
+    this.avgStoryPoint = totalCount / totalActiveUsers;
+  }
 }

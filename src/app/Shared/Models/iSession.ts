@@ -12,4 +12,18 @@ export interface IStoryDescription {
 export interface IShowHide {
   roomId: string;
   isShow: boolean;
+  averagePoint:number
+}
+
+export interface IEstimation {
+  roomId: string;
+  username: string;
+  storyPoint: number;
+}
+
+export interface IAllUsersWithSP{
+  roomId: string;
+  isObserver: boolean;
+  username: string;
+  storyPoint:number;
 }

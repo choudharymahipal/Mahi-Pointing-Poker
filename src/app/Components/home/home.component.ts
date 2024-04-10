@@ -8,6 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { AppComponent } from "../../app.component";
 //import { ToastrModule, ToastrService } from "ngx-toastr";
 
 @Component({
@@ -25,8 +26,10 @@ export class HomeComponent {
     private route: Router,
     private chatService: ChatService,
     private authService: AuthService,
+    private appCom: AppComponent,
     private fb: FormBuilder //private toastrService: ToastrService
   ) {
+    this.appCom.userJoinedRoom = false;
     this.cardForm = this.fb.group({
       roomId: [null, Validators.required],
     });
@@ -71,7 +74,6 @@ export class HomeComponent {
       alert("Please provide room Id to join session");
     }
   }
-
 
   //Toast
   // public showSuccess(): void {

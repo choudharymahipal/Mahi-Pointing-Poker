@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { Socket, io } from "socket.io-client";
 import { v4 as uuid } from "uuid";
 import {
+  IEstimation,
   ISession,
   IShowHide,
   IStoryDescription,
@@ -16,8 +17,8 @@ export class ChatService {
   public message$: BehaviorSubject<string> = new BehaviorSubject("");
   public room$: BehaviorSubject<string> = new BehaviorSubject("");
 
-  socket = io("http://localhost:3000");
-
+  //socket = io("http://localhost:3000");
+ socket = io("https://mahi-pointing-poker-api.onrender.com/");
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   //#region Rooms Activity
@@ -87,6 +88,23 @@ export class ChatService {
   getShowHide(): Observable<IShowHide[]> {
     return new Observable<IShowHide[]>((observer) => {
       this.socket.on("getAllShowHide", (data) => {
+        observer.next(data);
+      });
+      return () => {
+        this.socket.disconnect();
+      };
+    });
+  }
+  //#endregion
+
+  //#region Story point Activity
+  setStoryPoint(data: IEstimation): void {
+    this.socket.emit("setStoryPoint", data);
+  }
+
+  getStoryPoint(): Observable<IEstimation[]> {
+    return new Observable<IEstimation[]>((observer) => {
+      this.socket.on("getStoryPoint", (data) => {
         observer.next(data);
       });
       return () => {

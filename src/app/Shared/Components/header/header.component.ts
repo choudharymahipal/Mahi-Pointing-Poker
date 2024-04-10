@@ -2,7 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { ChatService } from "../../../Services/chat.service";
 import { AuthService } from "../../../Services/auth.service";
 import { CommonModule } from "@angular/common";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
+import { ISession } from "../../Models/iSession";
+import { AppComponent } from "../../../app.component";
 
 @Component({
   selector: "app-header",
@@ -14,13 +16,35 @@ import { Router } from "@angular/router";
 export class HeaderComponent implements OnInit {
   username!: string;
   isLoggedInWithUsername: boolean = false;
+  isOnline: boolean = false;
+  allRooms: any[] = [];
+  currentSession!: ISession;
+  userJoinedRoom:boolean=false;
 
   constructor(
     private router:Router,
     private readonly _chatService: ChatService,
-    private readonly _authService: AuthService
-  ) {}
-  ngOnInit(): void {}
+    private readonly _authService: AuthService,
+    private appCom:AppComponent
+  ) {
+    this.currentSession = this._authService.getCurrentSession();
+    this.userJoinedRoom=this.appCom.userJoinedRoom;
+  }
+  ngOnInit(): void {
+    this.getAllRooms();
+  }
+
+  getAllRooms(): void {
+    this._chatService.getAllRooms().subscribe((data: string[]) => {
+      this.allRooms = [];
+      this.allRooms = data;
+      if (this.allRooms.find((m) => m === this.currentSession.roomId)) {
+        this.isOnline = true;
+      } else {
+        this.isOnline = false;
+      }
+    });
+  }
 
   ngDoCheck(): void {
     this.getUsername();

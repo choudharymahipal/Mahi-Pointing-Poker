@@ -11,6 +11,7 @@ import {
 import { NotificationComponent } from "../../Shared/Components/notification/notification.component";
 import { Router } from "@angular/router";
 import { ChatService } from "../../Services/chat.service";
+import { AppComponent } from "../../app.component";
 
 @Component({
   selector: "app-poker-card",
@@ -31,8 +32,10 @@ export class PokerCardComponent implements OnInit {
     private authService: AuthService,
     private chatService: ChatService,
     private fb: FormBuilder,
-    private route: Router
+    private route: Router,
+    private appCom:AppComponent
   ) {
+    this.appCom.userJoinedRoom=false;
     this.currentSession = this.authService.getCurrentSession();
     if (this.currentSession.isObserver) {
       this.roomStatus = "Your room is ready to live!";
@@ -57,7 +60,6 @@ export class PokerCardComponent implements OnInit {
   }
 
   setUsername(): void {
-    debugger;
     let _username = this.cardForm.get("username")?.value;
     if (_username) {
       //if (this.currentSession.isObserver) {
