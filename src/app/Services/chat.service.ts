@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { Socket, io } from "socket.io-client";
-import { v4 as uuid } from "uuid";
+
 import {
   IEstimation,
   ISession,
@@ -10,27 +10,28 @@ import {
   IStoryDescription,
 } from "../Shared/Models/iSession";
 import { AuthService } from "./auth.service";
+import { CommonService } from "./common.service";
 @Injectable({
   providedIn: "root",
 })
 export class ChatService {
-  public message$: BehaviorSubject<string> = new BehaviorSubject("");
-  public room$: BehaviorSubject<string> = new BehaviorSubject("");
-
-  //socket = io("http://localhost:3000");
- socket = io("https://mahi-pointing-poker-api.onrender.com/");
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  socket = io("http://localhost:3000");
+  //socket = io("https://mahi-pointing-poker-api.onrender.com/");
+  constructor(private http: HttpClient, private authService: AuthService,private commonService:CommonService) {
+    this.socket.on("disconnect", (reason) => {
+      console.log("Disconnected: ", reason);
+    });
+  }
 
   //#region Rooms Activity
-  //Generate unique room id
-  generateUniqueId(): string {
-    const id: string = uuid();
-    return id;
-  }
 
   //When user click on Join Now
   createRoom(): void {
     let data = this.authService.getCurrentSession();
+    if (this.socket.id) {
+      data.socketId = this.socket.id;
+    }
+    this.authService.updateSessionJustBeforeCreateRoom(data);
     this.socket.emit("joinRoom", data);
   }
 
@@ -110,6 +111,14 @@ export class ChatService {
       return () => {
         this.socket.disconnect();
       };
+    });
+  }
+  //#endregion
+
+  //#region disconnect activity
+  disconnectUser(): void {
+    this.socket.on("disconnect", (reason) => {
+      console.log("Disconnected: ", reason);
     });
   }
   //#endregion

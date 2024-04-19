@@ -1,7 +1,10 @@
 export interface ISession {
+  userId:string;
   roomId: string;
+  socketId:string;
   isObserver: boolean;
   username: string;
+  isOnline:boolean;
 }
 
 export interface IStoryDescription {
@@ -16,14 +19,19 @@ export interface IShowHide {
 }
 
 export interface IEstimation {
+  userId:string;
   roomId: string;
+  socketId:string;
   username: string;
   storyPoint: number;
 }
 
 export interface IAllUsersWithSP{
+  userId:string;
   roomId: string;
+  socketId:string;
   isObserver: boolean;
+  isOnline:boolean;
   username: string;
   storyPoint:number;
 }

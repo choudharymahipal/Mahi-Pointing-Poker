@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import io from "socket.io-client";
 import { PokerCardComponent } from "../poker-card/poker-card.component";
 import { AuthService } from "../../Services/auth.service";
-import { Router } from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
 import { ChatService } from "../../Services/chat.service";
 import {
   IAllUsersWithSP,
@@ -25,6 +25,7 @@ import { AppComponent } from "../../app.component";
     CommonModule,
     ChatComponent,
   ],
+  providers: [AuthService, ChatService],
   templateUrl: "./poker-room.component.html",
   styleUrl: "./poker-room.component.scss",
 })
@@ -44,14 +45,17 @@ export class PokerRoomComponent implements OnInit {
   constructor(
     private readonly authService: AuthService,
     private route: Router,
+    private routerOutlet: RouterOutlet,
     private chatService: ChatService,
     private fb: FormBuilder,
-    private appCom:AppComponent
+    private appCom: AppComponent
   ) {
-    this.appCom.userJoinedRoom=true;
+    this.appCom.userJoinedRoom = true;
+    this.appCom.inRoomPage = true;
+
     this.currentSession = this.authService.getCurrentSession();
-    //this.socket = io("http://localhost:3000");
-    this.socket = io("https://mahi-pointing-poker-api.onrender.com");
+    this.socket = io("http://localhost:3000");
+    //this.socket = io("https://mahi-pointing-poker-api.onrender.com");
     this.cardForm = this.fb.group({
       sdescription: [null],
     });
@@ -67,6 +71,13 @@ export class PokerRoomComponent implements OnInit {
 
   ngDoCheck(): void {
     this.isLoggedIn();
+  }
+
+  ngOnChanges(): void {
+    this.routerOutlet.activateEvents.subscribe((event) => {
+      // Handle the event here.
+      console.log("Outlet Event: ", event);
+    });
   }
 
   getAllRooms(): void {
@@ -89,9 +100,12 @@ export class PokerRoomComponent implements OnInit {
       this.allUsers = data;
       for (const element of this.allUsers) {
         this.allUsersWithSP.push({
+          userId: element.userId,
           roomId: element.roomId,
+          socketId: element.socketId,
           username: element.username,
           isObserver: element.isObserver,
+          isOnline: element.isOnline,
           storyPoint: 0,
         });
       }
@@ -103,7 +117,6 @@ export class PokerRoomComponent implements OnInit {
       } else {
         this.showPlayerTable = false;
       }
-      console.log(this.showPlayerTable);
     });
   }
 
@@ -143,7 +156,7 @@ export class PokerRoomComponent implements OnInit {
   changeShowHideVotes() {
     this.isShowVotes = !this.isShowVotes;
     if (!this.isShowVotes) {
-      this.calulateAvg();
+      this.calculateAvg();
     }
     let obj: IShowHide = {
       roomId: this.currentSession.roomId,
@@ -172,7 +185,20 @@ export class PokerRoomComponent implements OnInit {
   clearVotes() {
     //clear votes
     this.isShowVotes = true;
+    this.avgStoryPoint = 0;
     this.cardForm.get("sdescription")?.setValue(null);
+    //clear story points for all users
+    for (let index = 0; index < this.allUsersWithSP.length; index++) {
+      let obj: IEstimation = {
+        userId: this.allUsersWithSP[index].userId,
+        socketId: this.allUsersWithSP[index].socketId,
+        roomId: this.allUsersWithSP[index].roomId,
+        username: this.allUsersWithSP[index].username,
+        storyPoint: 0,
+      };
+
+      this.chatService.setStoryPoint(obj);
+    }
   }
 
   isLoggedIn(): void {
@@ -188,10 +214,13 @@ export class PokerRoomComponent implements OnInit {
       alert("You are an observer. You don't need to give story points.");
     } else {
       let obj: IEstimation = {
+        userId: this.currentSession.userId,
         roomId: this.currentSession.roomId,
+        socketId: this.currentSession.socketId,
         username: this.currentSession.username,
         storyPoint: 0,
       };
+
       if (id === 0) {
         obj.storyPoint = 0.5;
       } else if (id === 1) {
@@ -214,6 +243,7 @@ export class PokerRoomComponent implements OnInit {
           if (element.roomId === this.currentSession.roomId) {
             let indexToUpdate = this.allUsersWithSP.findIndex(
               (a) =>
+                a.userId === element.userId &&
                 a.roomId === element.roomId &&
                 a.username === element.username &&
                 a.isObserver === false
@@ -226,13 +256,14 @@ export class PokerRoomComponent implements OnInit {
   }
   //#endregion
 
-  calulateAvg(): void {
+  calculateAvg(): void {
     this.avgStoryPoint = 0;
     //get only participated value
     let totalCount = 0;
     let totalActiveUsers = 0;
     for (let index = 0; index < this.allUsersWithSP.length; index++) {
       if (
+        this.allUsersWithSP[index].userId === this.currentSession.userId &&
         this.allUsersWithSP[index].roomId === this.currentSession.roomId &&
         this.allUsersWithSP[index].isObserver === false &&
         this.allUsersWithSP[index].storyPoint > 0
@@ -241,6 +272,8 @@ export class PokerRoomComponent implements OnInit {
         totalActiveUsers++;
       }
     }
-    this.avgStoryPoint = totalCount / totalActiveUsers;
+    if (totalCount > 0) {
+      this.avgStoryPoint = totalCount / totalActiveUsers;
+    }
   }
 }

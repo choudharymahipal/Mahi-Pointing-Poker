@@ -19,16 +19,17 @@ export class HeaderComponent implements OnInit {
   isOnline: boolean = false;
   allRooms: any[] = [];
   currentSession!: ISession;
-  userJoinedRoom:boolean=false;
-
+  userJoinedRoom: boolean = false;
+  inRoomPage: boolean = false;
   constructor(
-    private router:Router,
+    private router: Router,
     private readonly _chatService: ChatService,
     private readonly _authService: AuthService,
-    private appCom:AppComponent
+    private appCom: AppComponent
   ) {
     this.currentSession = this._authService.getCurrentSession();
-    this.userJoinedRoom=this.appCom.userJoinedRoom;
+    this.userJoinedRoom = this.appCom.userJoinedRoom;
+    this.inRoomPage = this.appCom.inRoomPage;
   }
   ngOnInit(): void {
     this.getAllRooms();
@@ -58,12 +59,12 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  reloadPage():void{
+  reloadPage(): void {
     //remove this before deployment
     this.router.navigateByUrl("/card");
   }
 
-  logout():void{
+  logout(): void {
     this._authService.removeAllSession();
   }
 }

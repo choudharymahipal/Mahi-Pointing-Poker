@@ -1,26 +1,37 @@
 import { Injectable } from "@angular/core";
 import { ISession } from "../Shared/Models/iSession";
 import { Router } from "@angular/router";
+import { CommonService } from "./common.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService {
-  constructor(private route: Router) {}
+  constructor(private route: Router,private commonService:CommonService) {}
 
-  createRoomSession(clientId: string): void {
+  createRoomSession(roomId: string): void {
     let obj: ISession = {
-      roomId: clientId,
+      userId: this.commonService.generateUniqueUserId(),
+      roomId: roomId,
+      socketId:"",
       isObserver: true,
+      isOnline:false,
       username: "",
     };
     sessionStorage.setItem("userDetails", JSON.stringify(obj));
   }
 
-  joinRoomSession(clientId: string): void {
+  updateSessionJustBeforeCreateRoom(data: ISession): void {
+    sessionStorage.setItem("userDetails", JSON.stringify(data));
+  }
+
+  joinRoomSession(roomId: string): void {
     let obj: ISession = {
-      roomId: clientId,
+      userId: this.commonService.generateUniqueUserId(),
+      roomId: roomId,
+      socketId:"",
       isObserver: false,
+      isOnline:false,
       username: "",
     };
     sessionStorage.setItem("userDetails", JSON.stringify(obj));
@@ -43,6 +54,7 @@ export class AuthService {
   }
 
   setUsernameInSession(username: string, currentSession: ISession): void {
+    //Here, userId will be blank. waiting for live room. once live then update it later.
     currentSession.username = username;
     sessionStorage.setItem("userDetails", JSON.stringify(currentSession));
   }

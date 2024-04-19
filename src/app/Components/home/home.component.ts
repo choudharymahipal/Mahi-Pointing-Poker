@@ -9,12 +9,14 @@ import {
   Validators,
 } from "@angular/forms";
 import { AppComponent } from "../../app.component";
+import { CommonService } from "../../Services/common.service";
 //import { ToastrModule, ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-home",
   standalone: true,
   imports: [ReactiveFormsModule],
+  providers:[CommonService],
   templateUrl: "./home.component.html",
   styleUrl: "./home.component.scss",
 })
@@ -26,10 +28,13 @@ export class HomeComponent {
     private route: Router,
     private chatService: ChatService,
     private authService: AuthService,
+    private commonService: CommonService,
     private appCom: AppComponent,
     private fb: FormBuilder //private toastrService: ToastrService
   ) {
     this.appCom.userJoinedRoom = false;
+    this.appCom.inRoomPage = false;
+
     this.cardForm = this.fb.group({
       roomId: [null, Validators.required],
     });
@@ -46,7 +51,6 @@ export class HomeComponent {
 
   getAllRooms(): void {
     this.chatService.getAllRooms().subscribe((data: string[]) => {
-      console.log("rooms: ", data);
       this.allRooms = [];
       this.allRooms = data;
     });
@@ -54,7 +58,7 @@ export class HomeComponent {
 
   //Create only session when user click on create room
   createRoom(): void {
-    let uniqueId = this.chatService.generateUniqueId();
+    let uniqueId = this.commonService.generateUniqueRoomId();
     this.authService.createRoomSession(uniqueId);
     this.route.navigateByUrl("/card");
   }

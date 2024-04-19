@@ -1,11 +1,13 @@
 <div class="row">
-    
+
     <div class="col-sm-6">
-        <p>Room ID: <label id="roomIdLabel">{{currentSession.roomId}}</label>
+        <p>Room ID: <label for="roomId"
+                id="roomIdLabel">{{currentSession.roomId}}</label>
             &nbsp; <button onclick="copyToClipboard(1)"
                 class="btn btn-sm btn-success">Copy</button> </p>
         <h3 id="currentUsername">{{currentSession.username | titlecase}}</h3>
-        <label class="userRole">(You are {{currentSession.isObserver?
+        <label for="userRole" class="userRole">(You are
+            {{currentSession.isObserver?
             "an Observer":"a Developer"}})</label>
         @if (currentSession.isObserver) {
         <form [formGroup]="cardForm">
@@ -45,8 +47,6 @@
         </div>
         }
         <br>
-        <!-- <app-chat></app-chat>
-        <br> -->
     </div>
     <div class="col-sm-6">
         <div>

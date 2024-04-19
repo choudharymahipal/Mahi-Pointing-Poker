@@ -17,6 +17,7 @@ import { AppComponent } from "../../app.component";
   selector: "app-poker-card",
   standalone: true,
   imports: [ReactiveFormsModule, NotificationComponent],
+  providers: [ChatService],
   templateUrl: "./poker-card.component.html",
   styleUrl: "./poker-card.component.scss",
 })
@@ -33,9 +34,11 @@ export class PokerCardComponent implements OnInit {
     private chatService: ChatService,
     private fb: FormBuilder,
     private route: Router,
-    private appCom:AppComponent
+    private appCom: AppComponent
   ) {
-    this.appCom.userJoinedRoom=false;
+    this.appCom.userJoinedRoom = false;
+    this.appCom.inRoomPage = false;
+
     this.currentSession = this.authService.getCurrentSession();
     if (this.currentSession.isObserver) {
       this.roomStatus = "Your room is ready to live!";
@@ -93,7 +96,6 @@ export class PokerCardComponent implements OnInit {
   //Get All users details
   getAllUsers(): void {
     this.chatService.getAllUsers().subscribe((data: ISession[]) => {
-      console.log("All Users:", data);
       this.allUsers = [];
       this.allUsers = data;
     });
