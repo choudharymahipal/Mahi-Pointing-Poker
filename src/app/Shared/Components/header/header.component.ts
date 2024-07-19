@@ -8,8 +8,6 @@ import { AppComponent } from "../../../app.component";
 
 @Component({
   selector: "app-header",
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: "./header.component.html",
   styleUrl: "./header.component.scss",
 })
@@ -58,12 +56,7 @@ export class HeaderComponent implements OnInit {
       this.username = data.username;
     }
   }
-
-  reloadPage(): void {
-    //remove this before deployment
-    this.router.navigateByUrl("/card");
-  }
-
+  
   logout(): void {
     this._authService.removeAllSession();
   }

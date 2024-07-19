@@ -11,13 +11,19 @@ import {
 } from "../Shared/Models/iSession";
 import { AuthService } from "./auth.service";
 import { CommonService } from "./common.service";
+import { Router } from "@angular/router";
+import { environment } from "./../../environments/environment";
 @Injectable({
   providedIn: "root",
 })
 export class ChatService {
-  socket = io("http://localhost:3000");
-  //socket = io("https://mahi-pointing-poker-api.onrender.com/");
-  constructor(private http: HttpClient, private authService: AuthService,private commonService:CommonService) {
+  socket = io(environment.SOCKET_ENDPOINT);
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private commonService: CommonService,
+    private router: Router
+  ) {
     this.socket.on("disconnect", (reason) => {
       console.log("Disconnected: ", reason);
     });
@@ -70,6 +76,7 @@ export class ChatService {
 
   //Get story description for other user (not observer)
   getStoryDescription(): Observable<IStoryDescription[]> {
+    console.log("I'm in service");
     return new Observable<IStoryDescription[]>((observer) => {
       this.socket.on("allStories", (data) => {
         observer.next(data);
@@ -79,6 +86,7 @@ export class ChatService {
       };
     });
   }
+
   //#endregion
 
   //#region Show Hide button Activity

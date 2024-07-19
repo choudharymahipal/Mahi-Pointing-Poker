@@ -5,7 +5,6 @@ import { AuthService } from "../../Services/auth.service";
 import {
   FormBuilder,
   FormGroup,
-  ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
 import { AppComponent } from "../../app.component";
@@ -14,9 +13,6 @@ import { CommonService } from "../../Services/common.service";
 
 @Component({
   selector: "app-home",
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  providers:[CommonService],
   templateUrl: "./home.component.html",
   styleUrl: "./home.component.scss",
 })

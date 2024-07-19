@@ -1,6 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import io from "socket.io-client";
-import { PokerCardComponent } from "../poker-card/poker-card.component";
 import { AuthService } from "../../Services/auth.service";
 import { Router, RouterOutlet } from "@angular/router";
 import { ChatService } from "../../Services/chat.service";
@@ -11,21 +10,13 @@ import {
   IShowHide,
   IStoryDescription,
 } from "../../Shared/Models/iSession";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-import { ChatComponent } from "../chat/chat.component";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { AppComponent } from "../../app.component";
+import { environment } from "../../../environments/environment";
+import { DOCUMENT } from "@angular/common";
 
 @Component({
   selector: "app-poker-room",
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    PokerCardComponent,
-    CommonModule,
-    ChatComponent,
-  ],
-  providers: [AuthService, ChatService],
   templateUrl: "./poker-room.component.html",
   styleUrl: "./poker-room.component.scss",
 })
@@ -48,14 +39,14 @@ export class PokerRoomComponent implements OnInit {
     private routerOutlet: RouterOutlet,
     private chatService: ChatService,
     private fb: FormBuilder,
-    private appCom: AppComponent
+    private appCom: AppComponent,
+    @Inject(DOCUMENT) private _document: Document
   ) {
     this.appCom.userJoinedRoom = true;
     this.appCom.inRoomPage = true;
 
     this.currentSession = this.authService.getCurrentSession();
-    this.socket = io("http://localhost:3000");
-    //this.socket = io("https://mahi-pointing-poker-api.onrender.com");
+    this.socket = io(environment.SOCKET_ENDPOINT);
     this.cardForm = this.fb.group({
       sdescription: [null],
     });
@@ -71,13 +62,6 @@ export class PokerRoomComponent implements OnInit {
 
   ngDoCheck(): void {
     this.isLoggedIn();
-  }
-
-  ngOnChanges(): void {
-    this.routerOutlet.activateEvents.subscribe((event) => {
-      // Handle the event here.
-      console.log("Outlet Event: ", event);
-    });
   }
 
   getAllRooms(): void {
@@ -128,6 +112,7 @@ export class PokerRoomComponent implements OnInit {
     };
     //set story description on the server
     this.chatService.setStoryDescription(obj);
+    this.reload();
   }
 
   //get story description
@@ -135,7 +120,6 @@ export class PokerRoomComponent implements OnInit {
     this.chatService
       .getStoryDescription()
       .subscribe((data: IStoryDescription[]) => {
-        //console.log("Stories: ", data);
         if (data.length) {
           for (const element of data) {
             if (element.roomId === this.currentSession.roomId) {
@@ -165,6 +149,7 @@ export class PokerRoomComponent implements OnInit {
     };
     //set show hide on the server
     this.chatService.setShowHide(obj);
+    this.reload();
   }
 
   getShowHideButton(): void {
@@ -199,6 +184,7 @@ export class PokerRoomComponent implements OnInit {
 
       this.chatService.setStoryPoint(obj);
     }
+    this.reload();
   }
 
   isLoggedIn(): void {
@@ -233,6 +219,7 @@ export class PokerRoomComponent implements OnInit {
         obj.storyPoint = 5;
       }
       this.chatService.setStoryPoint(obj);
+      this.reload();
     }
   }
 
@@ -275,5 +262,9 @@ export class PokerRoomComponent implements OnInit {
     if (totalCount > 0) {
       this.avgStoryPoint = totalCount / totalActiveUsers;
     }
+  }
+
+  reload() {
+    this._document.defaultView?.location.reload();
   }
 }

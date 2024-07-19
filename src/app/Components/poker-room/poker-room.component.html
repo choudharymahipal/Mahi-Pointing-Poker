@@ -91,7 +91,7 @@
         </div>
         <hr>
         <h5>These players are going to vote.</h5>
-        @if(showPlayerTable){
+        <!-- @if(showPlayerTable){ -->
         <table class="table table-striped shadow-lg">
             <thead>
                 <tr>
@@ -118,14 +118,20 @@
                 }
             </tbody>
         </table>
-        } @else{
+        <!-- } @else{
         <div class="noPlayers">
             <p>No one has joined yet!</p>
             <button onclick="copyToClipboard(2)"
                 class="btn btn-sm btn-info">Click here to copy the invitation
                 link</button>
         </div>
-        }
+        } -->
+
+        <div class="noPlayers">
+            <button onclick="copyToClipboard(2)"
+                class="btn btn-sm btn-info">Click here to copy the invitation
+                link</button>
+        </div>
     </div>
 
 </div>

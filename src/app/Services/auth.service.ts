@@ -7,15 +7,15 @@ import { CommonService } from "./common.service";
   providedIn: "root",
 })
 export class AuthService {
-  constructor(private route: Router,private commonService:CommonService) {}
+  constructor(private route: Router, private commonService: CommonService) {}
 
   createRoomSession(roomId: string): void {
     let obj: ISession = {
       userId: this.commonService.generateUniqueUserId(),
       roomId: roomId,
-      socketId:"",
+      socketId: "",
       isObserver: true,
-      isOnline:false,
+      isOnline: false,
       username: "",
     };
     sessionStorage.setItem("userDetails", JSON.stringify(obj));
@@ -29,9 +29,9 @@ export class AuthService {
     let obj: ISession = {
       userId: this.commonService.generateUniqueUserId(),
       roomId: roomId,
-      socketId:"",
+      socketId: "",
       isObserver: false,
-      isOnline:false,
+      isOnline: false,
       username: "",
     };
     sessionStorage.setItem("userDetails", JSON.stringify(obj));

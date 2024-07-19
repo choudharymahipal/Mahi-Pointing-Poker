@@ -5,19 +5,14 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { NotificationComponent } from "../../Shared/Components/notification/notification.component";
 import { Router } from "@angular/router";
 import { ChatService } from "../../Services/chat.service";
 import { AppComponent } from "../../app.component";
 
 @Component({
   selector: "app-poker-card",
-  standalone: true,
-  imports: [ReactiveFormsModule, NotificationComponent],
-  providers: [ChatService],
   templateUrl: "./poker-card.component.html",
   styleUrl: "./poker-card.component.scss",
 })

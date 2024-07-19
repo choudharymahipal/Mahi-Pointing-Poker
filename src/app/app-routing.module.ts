@@ -3,9 +3,8 @@ import { RouterModule, Routes } from "@angular/router";
 import { HomeComponent } from "./Components/home/home.component";
 import { PokerRoomComponent } from "./Components/poker-room/poker-room.component";
 import { PokerCardComponent } from "./Components/poker-card/poker-card.component";
-import { authGuard } from "./Shared/Guards/auth.guard";
 
-export const routes: Routes = [
+const routes: Routes = [
   { path: "", component: HomeComponent },
   { path: "room", component: PokerRoomComponent },
   { path: "card", component: PokerCardComponent },
