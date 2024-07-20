@@ -35,3 +35,8 @@ export interface IAllUsersWithSP{
   username: string;
   storyPoint:number;
 }
+
+export interface IVisitedUser {
+  IP: string;
+  Country: string;
+}

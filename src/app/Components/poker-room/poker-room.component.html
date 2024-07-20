@@ -42,7 +42,7 @@
             <div
                 class="mt-4 p-3 bg-gradient text-black rounded shadow-lg text-center avarageCard">
                 <h3>Average Point</h3>
-                <h3>{{avgStoryPoint}}</h3>
+                <h3>{{avgStoryPoint | number : '1.2-2'}}</h3>
             </div>
         </div>
         }
@@ -91,7 +91,6 @@
         </div>
         <hr>
         <h5>These players are going to vote.</h5>
-        <!-- @if(showPlayerTable){ -->
         <table class="table table-striped shadow-lg">
             <thead>
                 <tr>
@@ -106,8 +105,14 @@
                     <td class="font20">{{item.username | titlecase}}</td>
                     <td class="font20">
                         @if (isShowVotes) {
-                        <span
-                            class="badge rounded-pill bg-secondary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            @if(item.storyPoint > 0){
+                                <span
+                                class="badge rounded-pill bg-success">I am done</span>
+                            }@else {
+                                <span
+                                class="badge rounded-pill bg-secondary">I am thinking...</span>
+                            }
+                        
                         }@else {
                         <span
                             class="badge rounded-pill bg-success">{{item.storyPoint}}</span>
@@ -118,14 +123,6 @@
                 }
             </tbody>
         </table>
-        <!-- } @else{
-        <div class="noPlayers">
-            <p>No one has joined yet!</p>
-            <button onclick="copyToClipboard(2)"
-                class="btn btn-sm btn-info">Click here to copy the invitation
-                link</button>
-        </div>
-        } -->
 
         <div class="noPlayers">
             <button onclick="copyToClipboard(2)"

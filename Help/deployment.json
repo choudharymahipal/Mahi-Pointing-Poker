@@ -7,6 +7,6 @@
         "Follow below commands.",
         "npm install -g angular-cli-ghpages",
         "ng build --base-href \"/Mahi-Pointing-Poker/\"",
-        "ngh --dir dist/mahi-pointing-poker"
+        "ngh --dir dist/mahi-pointing-poker/browser"
     ]
 }

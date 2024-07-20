@@ -67,7 +67,7 @@ export class PokerRoomComponent implements OnInit {
   getAllRooms(): void {
     this.chatService.getAllRooms().subscribe((data: string[]) => {
       this.allRooms = [];
-      this.allRooms = data;
+      this.allRooms = [...new Set(data.map(item => item))];
       if (this.allRooms.find((m) => m === this.currentSession.roomId)) {
         this.isOnline = true;
       } else {
@@ -184,7 +184,10 @@ export class PokerRoomComponent implements OnInit {
 
       this.chatService.setStoryPoint(obj);
     }
-    this.reload();
+    setTimeout(() => {
+      this.reload();  
+    }, 1000);
+    
   }
 
   isLoggedIn(): void {
@@ -250,9 +253,7 @@ export class PokerRoomComponent implements OnInit {
     let totalActiveUsers = 0;
     for (let index = 0; index < this.allUsersWithSP.length; index++) {
       if (
-        this.allUsersWithSP[index].userId === this.currentSession.userId &&
         this.allUsersWithSP[index].roomId === this.currentSession.roomId &&
-        this.allUsersWithSP[index].isObserver === false &&
         this.allUsersWithSP[index].storyPoint > 0
       ) {
         totalCount += this.allUsersWithSP[index].storyPoint;

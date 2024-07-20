@@ -2,13 +2,10 @@ import { Component } from "@angular/core";
 import { Router } from "@angular/router";
 import { ChatService } from "../../Services/chat.service";
 import { AuthService } from "../../Services/auth.service";
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { AppComponent } from "../../app.component";
 import { CommonService } from "../../Services/common.service";
+import { ISession, IVisitedUser } from "../../Shared/Models/iSession";
 //import { ToastrModule, ToastrService } from "ngx-toastr";
 
 @Component({
@@ -19,6 +16,9 @@ import { CommonService } from "../../Services/common.service";
 export class HomeComponent {
   cardForm!: FormGroup;
   allRooms: any[] = [];
+  totalVisited: number = 0;
+  totalRooms: number = 0;
+  totalUsers: number = 0;
 
   constructor(
     private route: Router,
@@ -30,7 +30,6 @@ export class HomeComponent {
   ) {
     this.appCom.userJoinedRoom = false;
     this.appCom.inRoomPage = false;
-
     this.cardForm = this.fb.group({
       roomId: [null, Validators.required],
     });
@@ -39,16 +38,71 @@ export class HomeComponent {
   ngOnInit(): void {
     //Clear all sessions when home page loaded.
     this.authService.removeAllSession();
+    this.commonService.getVisitedCount().subscribe((res) => {
+      if (res) {
+        this.totalVisited = res;
+      }
+    });
+    this.updateVisitedUsers();
+    this.getAllRooms();
+    this.getAllUsers();
   }
 
-  ngDoCheck(): void {
-    this.getAllRooms();
+  updateVisitedUsers(): void {
+    this.commonService.getIpClient().subscribe((res) => {
+      if (res) {
+        try {
+          let obj = {
+            IP: res.IPv4,
+            Country: res.country_name,
+          };
+
+          //Read json file
+          this.commonService.getVisitedUsers().subscribe((res: any) => {
+            if (res) {
+              //parse json
+              var fileData = res;
+              //if file is already empty
+              if (fileData.length > 0) {
+                //check new ip is already exist or not
+                let existDataLen = fileData.findIndex(
+                  (x: IVisitedUser) => x.IP === obj.IP
+                );
+                //if not then save it
+                if (existDataLen === 0) {
+                  fileData.push(obj);
+                  this.commonService.updateVisitedUser(fileData);
+                }
+              } else {
+                //direct push it
+                fileData.push(obj);
+                this.commonService.updateVisitedUser(fileData);
+              }
+            }
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
   }
 
   getAllRooms(): void {
     this.chatService.getAllRooms().subscribe((data: string[]) => {
       this.allRooms = [];
-      this.allRooms = data;
+      if (data) {
+        this.allRooms = [...new Set(data.map(item => item))];
+        this.totalRooms = [...new Set(data.map(item => item))].length;
+      }
+    });
+  }
+
+  getAllUsers(): void {
+    this.chatService.getAllUsers().subscribe((data: ISession[]) => {
+      this.totalUsers=0;
+      if (data) {
+        this.totalUsers = data.length;
+      }
     });
   }
 
