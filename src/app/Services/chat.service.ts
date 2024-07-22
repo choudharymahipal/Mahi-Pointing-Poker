@@ -111,6 +111,10 @@ export class ChatService {
     this.socket.emit("setStoryPoint", data);
   }
 
+  clearStoryPoint(data: IEstimation[]): void {
+    this.socket.emit("clearStoryPoint", data);
+  }
+
   getStoryPoint(): Observable<IEstimation[]> {
     return new Observable<IEstimation[]>((observer) => {
       this.socket.on("getStoryPoint", (data) => {
